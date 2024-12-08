@@ -10,7 +10,7 @@ Welcome to **Chalked Up**, a social media platform designed specifically for the
 - **Content Sharing**: Post photos and videos of your climbs, and explore content shared by others.
 - **Community and Events**: Join groups, participate in forums, and attend climbing events.
 
-## Why Choose Let's Talk Over Here?
+## Why Choose Chalked Up?
 
 - **Climber-Centric**: Tailored specifically for the climbing community, with features that cater to climbers' needs.
 - **Engaging and Interactive**: A platform that encourages interaction and engagement among climbers.
