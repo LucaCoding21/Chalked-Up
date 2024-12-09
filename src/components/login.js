@@ -23,6 +23,9 @@ export default function Login() {
   };
 
   return (
-    <button onClick={handleLogin}>Login with Google</button>
+    <div className="login-container">
+      <h1 style={{color:'#c7b453'}}>Login</h1>
+      <button onClick={handleLogin}>Login with Google</button>
+    </div>
   );
 }

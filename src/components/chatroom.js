@@ -3,7 +3,7 @@ import { useUser } from '../context/userContext';
 import {collection,doc,getFirestore,getDoc} from 'firebase/firestore';
 import app from '../firebaseConfig';
 import NavBar from './navigation/navBar';
-
+import Login from './login';
 export default function Chatroom () {
   const [friends,setFriends] = useState([]);
   const [friendUsernames, setFriendUsernames] = useState({});
@@ -37,6 +37,10 @@ export default function Chatroom () {
     });
   }, [friends, db]);
   console.log(friends.length);
+  if(!user){
+    return <Login/>;
+  }
+
   return <div>
     <NavBar/>
     {friends.length > 0 ? (

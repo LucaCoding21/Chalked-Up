@@ -1,10 +1,11 @@
 import React, {createContext,useContext, useState} from 'react';
 import app from "../firebaseConfig";
 import {getAuth,signOut} from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
 const UserContext = createContext();
 
 export const UserProvider = ({children}) => {
-
+    const navigate = useNavigate();
     const auth = getAuth(app);
     const [user,setUser] = useState(null);
     //so in user is the user data and setUser is the function to set the user data
@@ -14,6 +15,7 @@ export const UserProvider = ({children}) => {
     const logout = () => {
         signOut(auth).then(() => {
             setUser(null);
+            navigate('/');
         }).catch((error) => {
             console.log(error);
         });

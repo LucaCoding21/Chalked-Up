@@ -3,6 +3,7 @@ import NavBar from '../navigation/navBar';
 import {collection,getFirestore,query,where,getDocs,orderBy} from 'firebase/firestore';
 import app from '../../firebaseConfig';
 import React, {useState,useEffect} from 'react';
+import Login from '../login';
 
 export default function MyProfile() {
     const {user} = useUser();
@@ -26,6 +27,10 @@ export default function MyProfile() {
             }
         });
     }, [db, user.uid]);
+    
+    if(!user){
+        return <Login/>;
+      }
     
     return <div>
         <NavBar/>

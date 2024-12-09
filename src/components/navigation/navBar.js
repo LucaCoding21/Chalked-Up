@@ -1,6 +1,8 @@
 import {useNavigate} from 'react-router-dom';
-
+import '../../styles/navBar.css';
+import { useUser } from '../../context/userContext';
 export default function NavBar () {
+  const {logout} = useUser();
   const navigate = useNavigate();
   const handleChatroomRoute = () => {
     navigate('/chatroom');
@@ -17,11 +19,17 @@ export default function NavBar () {
   const handleMakePostRoute = () => {
     navigate('/makepost');
   };
-    return <div>
-      <button onClick={handleChatroomRoute}>Chatroom</button>
-      <button onClick={handleSearchBarRoute}>Search Bar</button>
-      <button onClick={handleMainPageRoute}>Main Page</button>
-      <button onClick={handleMyProfileRoute}>My Profile</button>
-      <button onClick={handleMakePostRoute}>Make Post</button>
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+    return <div className='navBar'>
+    
+      <button onClick={handleChatroomRoute} className='navBarButton'>Chatroom</button>
+      <button onClick={handleSearchBarRoute} className='navBarButton'>Search Bar</button>
+      <button onClick={handleMainPageRoute} className='navBarButton'>Main Page</button>
+      <button onClick={handleMyProfileRoute} className='navBarButton'>My Profile</button>
+      <button onClick={handleMakePostRoute} className='navBarButton'>Make Post</button>
+      <button onClick={handleLogout} className='navBarButton'>Logout</button>
     </div>;
 }

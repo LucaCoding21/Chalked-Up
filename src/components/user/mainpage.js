@@ -6,11 +6,12 @@ import NavBar from '../navigation/navBar';
 import { useState, useEffect } from 'react';
 import { getFirestore, collection, doc, getDoc, query, where, orderBy, getDocs } from 'firebase/firestore';
 import app from '../../firebaseConfig';
-
+import '../../styles/mainpage.css'
 export default function MainPage() {
-  const {user, logout} = useUser();
+  const {user} = useUser();
   const [friends,setFriends] = useState([]);
   const [userData,setUserData] = useState([]);
+  
   const db = getFirestore(app);
   
   
@@ -51,13 +52,11 @@ export default function MainPage() {
       });
     }
   }, [db, friends]);
-console.log(userData);
+
   //so after all that, we have the friends of the user in the friends state
 
+  console.log(userData);
   
-  const handleLogout = () => {
-    logout();
-  };
 
   //if the user is not logged in, the login page is displayed
   if(!user){
@@ -67,12 +66,20 @@ console.log(userData);
   return (
     <div>
       <NavBar/>
-      <h1>Welcome {user.displayName}</h1>
       <UserForm/>
       {userData.map((post) => (
-        <p>{post.username}: {post.post}</p>
+        <div className="post" key={post.id}>
+            <div className="post-header">
+                <span className="post-title">{post.username}</span>
+                <span>{new Date(post.createdAt.seconds * 1000).toLocaleDateString()}</span>
+            </div>
+            <div className="post-content">
+                {post.post}
+            </div>
+            
+        </div>
       ))}
-      <button onClick={handleLogout}>Logout</button>
+    
      
     </div>
   );

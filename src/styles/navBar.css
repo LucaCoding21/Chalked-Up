@@ -1,0 +1,36 @@
+.navBar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    background-color: #1a1a1a;
+    justify-content: flex-start;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s;
+}
+
+.navBar:hover {
+    width: 300px;
+}
+
+.navBarButton{
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  padding: 15px;
+  margin: 5px 10px;
+  text-align: left;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.navBarButton:hover {
+    background-color: #333;
+    color: #c7b453;
+    border-radius: 5px;
+}
