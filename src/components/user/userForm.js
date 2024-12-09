@@ -4,7 +4,8 @@ import app from '../../firebaseConfig';
 import {getFirestore,collection, doc,getDoc,setDoc,query,where,getDocs} from 'firebase/firestore';
 import '../../styles/userForm.css';
 
-
+//TODO: make the user form page
+//TODO: make the user form page look nice- it should have more data fields
 export default function UserForm(){
   const {user} = useUser();
   const [userExists,setUserExists] = useState(null);

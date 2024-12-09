@@ -5,6 +5,8 @@ import app from '../../firebaseConfig';
 import React, {useState,useEffect} from 'react';
 import Login from '../login';
 
+//TODO: make the my profile page
+//TODO: make the my profile page look nice
 export default function MyProfile() {
     const {user} = useUser();
     const db = getFirestore(app);

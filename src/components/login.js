@@ -4,6 +4,7 @@ import React from 'react';
 import { useUser } from '../context/userContext';
 import app from "../firebaseConfig";
 
+//TODO: make the login page look nice
 export default function Login() {
   
   const {login} = useUser();//this is used to access the login function from the user context

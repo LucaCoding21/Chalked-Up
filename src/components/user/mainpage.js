@@ -3,10 +3,12 @@ import { useUser } from '../../context/userContext';
 import Login from '../login';
 import UserForm from './userForm';
 import NavBar from '../navigation/navBar';
+import MakePost from './makepost';
 import { useState, useEffect } from 'react';
-import { getFirestore, collection, doc, getDoc, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, query, where, orderBy, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
 import app from '../../firebaseConfig';
 import '../../styles/mainpage.css'
+
 export default function MainPage() {
   const {user} = useUser();
   const [friends,setFriends] = useState([]);
@@ -21,7 +23,6 @@ export default function MainPage() {
       getDoc(userDocRef).then((docSnap) => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
-          // console.log(userData.friends);
           setFriends(userData.friends || []);
         } else {
           console.log("No such document!");
@@ -30,6 +31,7 @@ export default function MainPage() {
     }
   }, [user, db]);
   useEffect(() => {
+    //TODO: show your posts in main page too
     if (friends.length > 0) {
       const postDocRef = query(
         collection(db, 'posts'),
@@ -53,10 +55,38 @@ export default function MainPage() {
     }
   }, [db, friends]);
 
-  //so after all that, we have the friends of the user in the friends state
+  const handleLike = (postId) => {
+    setUserData((prevUserData) =>
+      prevUserData.map((post) => {//this is used to update the likes of the post
+        if (post.id === postId) {//if the post id is the same as the post id, then the post is updated
+          const hasLiked = post.likes?.includes(user.uid);//this is used to check if the user has liked the post
+          const updatedLikes = hasLiked
+            ? post.likes.filter((uid) => uid !== user.uid)//this is used to remove the user id from the likes
+            : [...(post.likes || []), user.uid];//this is used to add the user id to the likes
 
-  console.log(userData);
-  
+          // Update the server
+          const postDocRef = doc(collection(db, 'posts'), postId);
+          updateDoc(postDocRef, {
+            likes: hasLiked ? updatedLikes : arrayUnion(user.uid),//this is used to update the likes of the post  
+            ...(hasLiked && { likes: updatedLikes }) // Remove user ID if unliking
+          }).catch((error) => {
+            console.error("Error updating likes: ", error);
+          });
+
+          return { ...post, likes: updatedLikes };//this is used to return the updated post
+        }
+        return post;
+      })
+    );
+  };
+  //TODO: make the repost feature
+  const handleRepost = (postId) => {
+    console.log(postId);
+  };
+ 
+  //TODO: Make a comment feature
+
+  //TODO: Make the refresh not so buggy
 
   //if the user is not logged in, the login page is displayed
   if(!user){
@@ -66,6 +96,7 @@ export default function MainPage() {
   return (
     <div>
       <NavBar/>
+      <MakePost/>
       <UserForm/>
       {userData.map((post) => (
         <div className="post" key={post.id}>
@@ -76,7 +107,13 @@ export default function MainPage() {
             <div className="post-content">
                 {post.post}
             </div>
-            
+            <div className="post-footer">
+            <p>{post.likes?.length ?? 0} likes</p>
+                <button onClick={() => handleLike(post.id)}>
+                  {post.likes?.includes(user.uid) ? 'Unlike' : 'Like'}
+                </button>
+                <button onClick={() => handleRepost(post.id)}>Repost</button>
+            </div>
         </div>
       ))}
     

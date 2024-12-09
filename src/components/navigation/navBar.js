@@ -1,7 +1,9 @@
 import {useNavigate} from 'react-router-dom';
 import '../../styles/navBar.css';
 import { useUser } from '../../context/userContext';
+import SearchBar from './searchBar';
 export default function NavBar () {
+  //TODO: Make a friend request and deny page
   const {logout} = useUser();
   const navigate = useNavigate();
   const handleChatroomRoute = () => {
@@ -13,9 +15,6 @@ export default function NavBar () {
   const handleMyProfileRoute = () => {
     navigate('/myprofile');
   };
-  const handleSearchBarRoute = () => {
-    navigate('/searchbar');
-  };
   const handleMakePostRoute = () => {
     navigate('/makepost');
   };
@@ -26,7 +25,7 @@ export default function NavBar () {
     return <div className='navBar'>
     
       <button onClick={handleChatroomRoute} className='navBarButton'>Chatroom</button>
-      <button onClick={handleSearchBarRoute} className='navBarButton'>Search Bar</button>
+      <SearchBar />
       <button onClick={handleMainPageRoute} className='navBarButton'>Main Page</button>
       <button onClick={handleMyProfileRoute} className='navBarButton'>My Profile</button>
       <button onClick={handleMakePostRoute} className='navBarButton'>Make Post</button>
