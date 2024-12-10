@@ -31,7 +31,7 @@ export default function MainPage() {
     }
   }, [user, db]);
   useEffect(() => {
-    //TODO: show your posts in main page too
+    //TODO: show your posts in main page
     if (friends.length > 0) {
       const postDocRef = query(
         collection(db, 'posts'),
@@ -85,6 +85,10 @@ export default function MainPage() {
   };
  
   //TODO: Make a comment feature
+  const handleComment = (e, postId, comment) => {
+    e.preventDefault();
+    console.log(postId, comment);
+  };
 
   //TODO: Make the refresh not so buggy
 
@@ -113,6 +117,10 @@ export default function MainPage() {
                   {post.likes?.includes(user.uid) ? 'Unlike' : 'Like'}
                 </button>
                 <button onClick={() => handleRepost(post.id)}>Repost</button>
+                <form onSubmit={(e) => handleComment(e, post.id, e.target.comment.value)}>
+                  <input type="text" placeholder="Comment" name="comment" />
+                  <button type="submit">Comment</button>
+                </form>
             </div>
         </div>
       ))}

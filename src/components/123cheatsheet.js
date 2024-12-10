@@ -63,3 +63,4 @@ await updateDoc(docRef4, {
 //so if we want to repost a post, we can 
 //make a post underuser, and in the spots we just put the posts.
 
+//lets think about how to make friend request and deny page

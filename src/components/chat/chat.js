@@ -60,7 +60,7 @@ export default function Chat() {
 
     //okay so now we have the user data and the friend data
 
-    //TODO: function to load messages
+
     useEffect(() => {
         if (!chatID) return;
 
@@ -76,7 +76,7 @@ export default function Chat() {
         return () => unsubscribe(); // Cleanup subscription
     }, [chatID, db]);
 
-    //TODO: function to send messages
+
     const sendMessage = async (e) => {
         e.preventDefault(); // Prevent form submission
         if (!message.trim() || !chatID) return;
