@@ -1,36 +1,44 @@
-.navBar{
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    background-color: #1a1a1a;
-    justify-content: flex-start;
-    padding-top: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s;
+.navBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  justify-content: flex-start;
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s;
 }
 
-.navBar:hover {
-    width: 300px;
-}
-
-.navBarButton{
-  background-color: transparent;
-  color: #fff;
-  border: none;
-  padding: 15px;
-  margin: 5px 10px;
-  text-align: left;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+.navBarButton {
+background-color: transparent;
+color: #fff;
+border: none;
+padding: 5px;
+margin: 2px 5px;
+text-align: left;
+font-size: 0.8em;
+cursor: pointer;
+transition: background-color 0.3s, color 0.3s;
+display: flex;
+align-items: center;
+gap: 5px;
 }
 
 .navBarButton:hover {
-    background-color: #333;
-    color: #c7b453;
-    border-radius: 5px;
+  background-color: #333;
+  color: #c7b453;
+  border-radius: 5px;
+}
+
+.unread-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: yellow;
+  border-radius: 50%;
+  margin-left: 5px;
 }

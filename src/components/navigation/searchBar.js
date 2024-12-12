@@ -4,7 +4,7 @@ import {collection,query,where,getDocs,getFirestore,doc,arrayUnion, updateDoc} f
 import app from '../../firebaseConfig';
 import {useState,useEffect} from 'react';
 
-//TODO: Make the search bar in the nav 
+
 const SearchBar = () => {
   const {user} = useUser();//this is used to access the user data from the user context
   const [searchInput, setSearchInput] = useState('');//this is the input that will be used to search for users

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Login from '../login';
 import '../../styles/makepost.css';
 
-export default function MakePost() {
+export default function MakePost({ onPostCreated }) {
   const { user } = useUser();
   const [post, setPost] = useState('');
   const [username, setUsername] = useState('');
@@ -24,18 +24,28 @@ export default function MakePost() {
 
   const uploadPost = async () => {
     const postCollectionRef = collection(db, 'posts');
-    await addDoc(postCollectionRef, {
+    const docRef = await addDoc(postCollectionRef, {
       username: username,
       post: post,
       uid: user.uid,
       createdAt: serverTimestamp()
     });
     console.log(username);
+    return docRef;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    uploadPost();
+    const docRef = await uploadPost();
+    const newPost = {
+      id: docRef.id,
+      post: post,
+      uid: user.uid,
+      username: user.displayName || user.email,
+      createdAt: new Date(),
+      likes: []
+    };
+    onPostCreated(newPost);
     setPost('');
     navigate('/');
   };

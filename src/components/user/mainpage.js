@@ -17,7 +17,7 @@ export default function MainPage() {
   const db = getFirestore(app);
   
   
-  useEffect(() => {
+  useEffect(() => {//this is used to get the friends of the user
     if (user && user.uid) {
       const userDocRef = doc(collection(db, 'users'), user.uid);
       getDoc(userDocRef).then((docSnap) => {
@@ -31,11 +31,10 @@ export default function MainPage() {
     }
   }, [user, db]);
   useEffect(() => {
-    //TODO: show your posts in main page
-    if (friends.length > 0) {
+    if (user && friends.length >= 0) {
       const postDocRef = query(
         collection(db, 'posts'),
-        where('uid', 'in', friends),
+        where('uid', 'in', [user.uid, ...friends]),
         orderBy('createdAt', 'desc')
       );
 
@@ -47,33 +46,50 @@ export default function MainPage() {
           }));
           setUserData(postsData);
         } else {
-          console.log("No posts found for this user!");
+          console.log("No posts found!");
         }
       }).catch((error) => {
         console.error("Error fetching posts: ", error);
       });
     }
-  }, [db, friends]);
+  }, [db, friends, user]);
 
-  const handleLike = (postId) => {
+  const handleLike = async (postId) => {
     setUserData((prevUserData) =>
-      prevUserData.map((post) => {//this is used to update the likes of the post
-        if (post.id === postId) {//if the post id is the same as the post id, then the post is updated
-          const hasLiked = post.likes?.includes(user.uid);//this is used to check if the user has liked the post
+      prevUserData.map((post) => {
+        if (post.id === postId) {
+          const hasLiked = post.likes?.includes(user.uid);
           const updatedLikes = hasLiked
-            ? post.likes.filter((uid) => uid !== user.uid)//this is used to remove the user id from the likes
-            : [...(post.likes || []), user.uid];//this is used to add the user id to the likes
+            ? post.likes.filter((uid) => uid !== user.uid)
+            : [...(post.likes || []), user.uid];
 
-          // Update the server
+          // Update the post document
           const postDocRef = doc(collection(db, 'posts'), postId);
           updateDoc(postDocRef, {
-            likes: hasLiked ? updatedLikes : arrayUnion(user.uid),//this is used to update the likes of the post  
-            ...(hasLiked && { likes: updatedLikes }) // Remove user ID if unliking
+            likes: hasLiked ? updatedLikes : arrayUnion(user.uid),
+            ...(hasLiked && { likes: updatedLikes })
           }).catch((error) => {
             console.error("Error updating likes: ", error);
           });
 
-          return { ...post, likes: updatedLikes };//this is used to return the updated post
+          // Add notification to post owner's document
+          if (!hasLiked) {  // Only notify when liking, not unliking
+            const userDocRef = doc(collection(db, 'users'), post.uid);
+            updateDoc(userDocRef, {
+              notifications: arrayUnion({
+                type: 'like',
+                postId: postId,
+                fromUser: user.uid,
+                fromUsername: user.displayName || user.email,
+                createdAt: new Date(),
+                read: false
+              })
+            }).catch((error) => {
+              console.error("Error updating notifications: ", error);
+            });
+          }
+          
+          return { ...post, likes: updatedLikes };
         }
         return post;
       })
@@ -92,6 +108,11 @@ export default function MainPage() {
 
   //TODO: Make the refresh not so buggy
 
+  // Add this new function to handle new posts
+  const handleNewPost = (newPost) => {
+    setUserData(prevData => [newPost, ...prevData]);
+  };
+
   //if the user is not logged in, the login page is displayed
   if(!user){
     return <Login/>;
@@ -100,7 +121,7 @@ export default function MainPage() {
   return (
     <div>
       <NavBar/>
-      <MakePost/>
+      <MakePost onPostCreated={handleNewPost}/>
       <UserForm/>
       {userData.map((post) => (
         <div className="post" key={post.id}>

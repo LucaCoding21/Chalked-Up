@@ -64,3 +64,7 @@ await updateDoc(docRef4, {
 //make a post underuser, and in the spots we just put the posts.
 
 //lets think about how to make friend request and deny page
+
+
+//how did that notification thing work
+// also how to get real time updates
