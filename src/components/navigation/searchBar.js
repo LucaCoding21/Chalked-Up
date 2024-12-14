@@ -1,54 +1,97 @@
-import {useUser} from '../../context/userContext';
-
-import {collection,query,where,getDocs,getFirestore,doc,arrayUnion, updateDoc} from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { collection, query, where, getDocs, getFirestore, doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 import app from '../../firebaseConfig';
-import {useState,useEffect} from 'react';
 
+import _ from 'lodash';
+import { useUser } from '../../context/userContext';
 
-const SearchBar = () => {
-  const {user} = useUser();//this is used to access the user data from the user context
-  const [searchInput, setSearchInput] = useState('');//this is the input that will be used to search for users
-  const [results, setResults] = useState([]); //this is the array that will store the results of the search
+export default function SearchBar() {
+  const { user } = useUser();
+  const [queryText, setQueryText] = useState('');
+  const [results, setResults] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
   const db = getFirestore(app);
-
-  useEffect(() => {//useEffect is used to fetch the users from the database when the search input changes 
-    const fetchUsers = async () => {//async because fetching data from the database is an asynchronous operation
-      if (searchInput.length > 0) {//if the search input is not empty
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (queryText.length > 0) {
         const usersCollectionRef = collection(db, 'users');
-        const q = query(usersCollectionRef, where('username', '==', searchInput));
+        const q = query(usersCollectionRef, where('username', '>=', queryText));
         const querySnapshot = await getDocs(q);
-        setResults(querySnapshot.docs.map((doc) => doc.data()));//this is used to set the results to the users fetched from the database
+        setResults(querySnapshot.docs.map((doc) => doc.data()));
+      } else {
+        setResults([]);
       }
     };
-    fetchUsers();
-  }, [searchInput,db]);
 
-  const handleChange = (e) => {
-    setSearchInput(e.target.value);//this is used to set the search input to the value of the input field
+    const debouncedFetch = _.debounce(fetchUsers, 300);
+    debouncedFetch();
+
+    return () => {
+      debouncedFetch.cancel();
+    };
+  }, [queryText, db]);
+
+  const handleSearch = (e) => {
+    setQueryText(e.target.value);
   };
 
-  const addFriend = async (uid) => {
-    //this will add friend
-    const userDocRef = doc(db, 'users', uid);
-    await updateDoc(userDocRef, {
-      friends:arrayUnion(user.uid)
-    });
-    console.log(uid);
+  const sendFriendRequest = async (userId) => {
+    if (!user || !user.uid) {
+      console.error('User data is incomplete:', user);
+      return;
+    }
+
+    try {
+      // Fetch the current user's document to get the username
+      const currentUserDocRef = doc(db, 'users', user.uid);
+      const currentUserDoc = await getDoc(currentUserDocRef);
+      const currentUserData = currentUserDoc.data();
+
+      if (!currentUserData || !currentUserData.username) {
+        console.error('Current user data is incomplete:', currentUserData);
+        return;
+      }
+
+      const userDocRef = doc(db, 'users', userId);
+      await updateDoc(userDocRef, {
+        notifications: arrayUnion({
+          type: 'friend_request',
+          fromUsername: currentUserData.username,
+          fromUserId: user.uid,
+          createdAt: new Date(),
+          read: false,
+        }),
+      });
+      setSentRequests([...sentRequests, userId]);
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+    }
   };
 
   return (
-    <div>
-      <input type="text" value={searchInput} onChange={handleChange} placeholder="Search users..." />
-      <ul>
-        {results.map((result, index) => (//for each user in the results array, a list item is created
-          <li key={index}>
+    <div className="search-container">
+      <input
+        type="text"
+        value={queryText}
+        onChange={handleSearch}
+        placeholder="Search..."
+        className="search-input"
+      />
+      <ul className="search-results">
+        {results.map((result, index) => (
+          <li key={index} className="search-result-item">
             {result.username}
-            <button onClick={() => addFriend(result.uid)}>Add Friend</button>
+            <button
+              onClick={() => sendFriendRequest(result.uid)}
+              disabled={sentRequests.includes(result.uid)}
+              className="friend-request-button"
+            >
+              {sentRequests.includes(result.uid) ? 'Request Sent' : 'Add Friend'}
+            </button>
           </li>
         ))}
       </ul>
     </div>
   );
-};
-
-export default SearchBar;
+}

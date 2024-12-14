@@ -1,6 +1,6 @@
 import {useUser} from '../../context/userContext';
 import NavBar from '../navigation/navBar';
-import {collection,getFirestore,query,where,getDocs,orderBy} from 'firebase/firestore';
+import {collection,getFirestore,query,where,getDocs,orderBy,doc,getDoc} from 'firebase/firestore';
 import app from '../../firebaseConfig';
 import React, {useState,useEffect} from 'react';
 import Login from '../login';
@@ -11,6 +11,7 @@ export default function MyProfile() {
     const {user} = useUser();
     const db = getFirestore(app);
     const [userData,setUserData] = useState([]);
+    const [username,setUsername] = useState('');
     useEffect(() => {
         const postDocRef = query(
             collection(db, 'posts'),
@@ -28,16 +29,32 @@ export default function MyProfile() {
                 console.log("No posts found for this user!");
             }
         });
+        
     }, [db, user.uid]);
     
+    useEffect(() => {
+        const fetchUsername = async () => {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+                setUsername(userDoc.data().username);
+            } else {
+                console.log("User document not found!");
+            }
+        };
+
+        fetchUsername();
+    }, [db, user.uid]);
+
     if(!user){
         return <Login/>;
       }
     
     return <div>
         <NavBar/>
-        {userData.map((post) => (//map the userData to an array of p tags
-            <p>{post.post}</p>
+        <h1>{username}</h1>
+        {userData.map((post) => (
+            <p key={post.id}>{post.post}</p>
         ))}
         </div>;
 }

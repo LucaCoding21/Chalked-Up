@@ -60,7 +60,7 @@ export default function NavBar() {
   };
 
   return (
-    <div className='navBar'>
+    <div className={`navBar ${activeComponent === 'notification' || activeComponent === 'search' ? 'expanded' : ''}`}>
       <button onClick={() => setActiveComponent('search')} className='navBarButton'>
         {activeComponent === 'search' ? 'Search' : <FontAwesomeIcon icon={faSearch} />}
       </button>
@@ -84,8 +84,16 @@ export default function NavBar() {
         {activeComponent ? <FontAwesomeIcon icon={faSignOutAlt} /> : 'Logout'}
       </button>
 
-      {activeComponent === 'search' && <SearchBar />}
-      {activeComponent === 'notification' && <Notification />}
+      {activeComponent === 'search' && (
+        <div className="search-panel">
+          <SearchBar />
+        </div>
+      )}
+      {activeComponent === 'notification' && (
+        <div className="notification-panel">
+          <Notification />
+        </div>
+      )}
     </div>
   );
 }

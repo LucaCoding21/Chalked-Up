@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '../../context/userContext';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import app from '../../firebaseConfig';
 
 export default function Notifications() {
   const { user } = useUser();
   const [notifications, setNotifications] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
   const db = getFirestore(app);
 
-  // Fetch notifications
-  useEffect(() => {//on load, fetch notifications
-    const fetchNotifications = async () => {// an async function that will get the nofications
-      if (user && user.uid) {//if the user is logged in
-        const userDocRef = doc(db, 'users', user.uid);//get the user doc ref
-        const docSnap = await getDoc(userDocRef);//get the doc snap
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (user && user.uid) {
+        const userDocRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(userDocRef);
         
-        if (docSnap.exists() && docSnap.data().notifications) {//and if doc has notifications
-          // Sort notifications by date (newest first)
+        if (docSnap.exists() && docSnap.data().notifications) {
           const sortedNotifications = [...docSnap.data().notifications]
-            .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());//to millis is to convert the date to a number
+            .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
           setNotifications(sortedNotifications);
         }
       }
@@ -27,28 +26,64 @@ export default function Notifications() {
     fetchNotifications();
   }, [user, db]);
 
-  // Mark notification as read
   const markAsRead = async (notificationIndex) => {
     if (user && user.uid) {
       const userDocRef = doc(db, 'users', user.uid);
-      
-      // Create updated notifications array
       const updatedNotifications = [...notifications];
       updatedNotifications[notificationIndex].read = true;
 
-      // Update in Firestore
       await updateDoc(userDocRef, {
         notifications: updatedNotifications
       });
 
-      // Update local state
       setNotifications(updatedNotifications);
     }
+  };
+
+  const acceptFriendRequest = async (notificationIndex) => {
+    const notification = notifications[notificationIndex];
+    console.log('Notification:', notification);
+
+    if (notification.type === 'friend_request' && notification.fromUserId) {
+      const userDocRef = doc(db, 'users', user.uid);
+      const friendDocRef = doc(db, 'users', notification.fromUserId);
+
+      await updateDoc(userDocRef, {
+        friends: arrayUnion(notification.fromUserId)
+      });
+
+      await updateDoc(friendDocRef, {
+        friends: arrayUnion(user.uid)
+      });
+
+      const updatedNotifications = [...notifications];
+      updatedNotifications[notificationIndex].accepted = true;
+      setNotifications(updatedNotifications);
+
+      markAsRead(notificationIndex);
+    } else {
+      console.error('Invalid notification or missing fromUserId');
+    }
+  };
+
+  const sendFriendRequest = async (userId) => {
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      notifications: arrayUnion({
+        type: 'friend_request',
+        fromUsername: user.username,
+        fromUserId: user.uid,
+        createdAt: new Date(),
+        read: false,
+      }),
+    });
+    setSentRequests([...sentRequests, userId]);
   };
 
   return (
     <div className="notifications-container">
       <h2>Notifications</h2>
+      <button onClick={() => notifications.forEach((_, i) => markAsRead(i))}>Mark All as Read</button>
       {notifications.length === 0 ? (
         <p>No notifications</p>
       ) : (
@@ -67,7 +102,19 @@ export default function Notifications() {
                   </span>
                 </p>
               )}
-              {/* Add more notification types here as needed */}
+              {notification.type === 'friend_request' && (
+                <div>
+                  <p>
+                    <strong>{notification.fromUsername}</strong> sent you a friend request
+                  </p>
+                  <button 
+                    onClick={() => acceptFriendRequest(index)}
+                    disabled={notification.accepted}
+                  >
+                    {notification.accepted ? 'Accepted' : 'Accept'}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
