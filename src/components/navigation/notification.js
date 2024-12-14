@@ -6,7 +6,7 @@ import app from '../../firebaseConfig';
 export default function Notifications() {
   const { user } = useUser();
   const [notifications, setNotifications] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
+  // const [sentRequests, setSentRequests] = useState([]);
   const db = getFirestore(app);
 
   useEffect(() => {
@@ -64,20 +64,6 @@ export default function Notifications() {
     } else {
       console.error('Invalid notification or missing fromUserId');
     }
-  };
-
-  const sendFriendRequest = async (userId) => {
-    const userDocRef = doc(db, 'users', userId);
-    await updateDoc(userDocRef, {
-      notifications: arrayUnion({
-        type: 'friend_request',
-        fromUsername: user.username,
-        fromUserId: user.uid,
-        createdAt: new Date(),
-        read: false,
-      }),
-    });
-    setSentRequests([...sentRequests, userId]);
   };
 
   return (
