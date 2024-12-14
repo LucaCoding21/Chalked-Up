@@ -14,21 +14,10 @@ export default function MainPage() {
   const [friends,setFriends] = useState([]);
   const [userData,setUserData] = useState([]);
   const [username,setUsername] = useState('');
+
   const db = getFirestore(app);
   
-  useEffect(() => {
-    const fetchUsername = async () => {
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-            setUsername(userDoc.data().username);
-        } else {
-            console.log("User document not found!");
-        }
-    };
-
-    fetchUsername();
-  }, [db, user.uid]);
+  
   useEffect(() => {//this is used to get the friends of the user
     if (user && user.uid) {
       const userDocRef = doc(collection(db, 'users'), user.uid);
@@ -83,7 +72,19 @@ export default function MainPage() {
           }).catch((error) => {
             console.error("Error updating likes: ", error);
           });
-
+          
+          const fetchUsername = async () => {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                if (userDoc.exists()) {
+                    setUsername(userDoc.data().username);
+                } else {
+                    console.log("User document not found!");
+                }
+            };
+    
+          fetchUsername();
+      
           // Add notification to post owner's document
           if (!hasLiked) {  // Only notify when liking, not unliking
             const userDocRef = doc(collection(db, 'users'), post.uid);
@@ -124,6 +125,7 @@ export default function MainPage() {
   const handleNewPost = (newPost) => {
     setUserData(prevData => [newPost, ...prevData]);
   };
+  
 
   //if the user is not logged in, the login page is displayed
   if(!user){
