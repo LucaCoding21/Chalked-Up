@@ -8,7 +8,7 @@ export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   // const [sentRequests, setSentRequests] = useState([]);
   const db = getFirestore(app);
-
+  console.log(notifications);
   useEffect(() => {
     const fetchNotifications = async () => {
       if (user && user.uid) {
@@ -19,6 +19,7 @@ export default function Notifications() {
           const sortedNotifications = [...docSnap.data().notifications]
             .sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
           setNotifications(sortedNotifications);
+
         }
       }
     };

@@ -13,10 +13,22 @@ export default function MainPage() {
   const {user} = useUser();
   const [friends,setFriends] = useState([]);
   const [userData,setUserData] = useState([]);
-  
+  const [username,setUsername] = useState('');
   const db = getFirestore(app);
   
-  
+  useEffect(() => {
+    const fetchUsername = async () => {
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+            setUsername(userDoc.data().username);
+        } else {
+            console.log("User document not found!");
+        }
+    };
+
+    fetchUsername();
+  }, [db, user.uid]);
   useEffect(() => {//this is used to get the friends of the user
     if (user && user.uid) {
       const userDocRef = doc(collection(db, 'users'), user.uid);
@@ -80,7 +92,7 @@ export default function MainPage() {
                 type: 'like',
                 postId: postId,
                 fromUser: user.uid,
-                fromUsername: user.displayName || user.email,
+                fromUsername: username || user.email,
                 createdAt: new Date(),
                 read: false
               })
