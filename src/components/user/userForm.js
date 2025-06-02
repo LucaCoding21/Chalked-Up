@@ -3,7 +3,6 @@ import { useUser } from '../../context/userContext';
 import app from '../../firebaseConfig';
 import { getFirestore, collection, doc, getDoc, setDoc, query, where, getDocs } from 'firebase/firestore';
 import '../../styles/userForm.css';
-import { useNavigate } from 'react-router-dom';
 
 //TODO: make the user form page
 //TODO: make the user form page look nice- it should have more data fields
@@ -14,7 +13,6 @@ export default function UserForm() {
   const db = getFirestore(app);
   const userDocRef = doc(collection(db, 'users'), user.uid);
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
     getDoc(userDocRef).then((docSnap) => {
