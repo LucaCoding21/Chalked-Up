@@ -1,47 +1,234 @@
-.post {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin: 20px;
+/* Main page container */
+.main-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+              url('https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   padding: 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  width: 100%;
+  margin: 0;
+  z-index: 0;
+  overflow-y: auto;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+}
+
+/* Posts container */
+.posts-container {
   max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  padding-left: 220px; /* leave space for sidebar */
+  z-index: 1;
+  position: relative;
+}
+
+/* Professional climbing-themed card style */
+.post, .make-post-container {
+  background: rgba(34, 40, 49, 0.85); /* dark, semi-opaque */
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 8px 0 rgba(0,0,0,0.10) inset;
+  border: 1.5px solid #c7b453;
+  margin: 1.5rem 0;
   overflow: hidden;
-
+  position: relative;
+  transition: box-shadow 0.3s, border 0.3s, transform 0.2s;
+  font-family: inherit;
 }
 
-.post:hover {
-  transform: scale(1.02);
+.post:hover, .make-post-container:hover {
+  box-shadow: 0 16px 48px 0 rgba(199, 180, 83, 0.18), 0 2px 12px 0 rgba(0,0,0,0.13) inset;
+  border: 1.5px solid #e5d17a;
+  transform: translateY(-4px) scale(1.01);
 }
 
-.post-header {
+/* Climbing icon watermark */
+.post::after, .make-post-container::after {
+  content: '\1F9D7'; /* 🧗‍♂️ emoji as watermark */
+  position: absolute;
+  bottom: 18px;
+  right: 22px;
+  font-size: 2.2rem;
+  color: rgba(199, 180, 83, 0.10);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Faint rock texture overlay (optional, can be commented out if not wanted) */
+.post::before, .make-post-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url('https://www.transparenttextures.com/patterns/rocky-wall.png');
+  opacity: 0.07;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Padding and content styles */
+.post-header, .make-post-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
-  color: #c7b453;
-  padding: 15px;
-  font-size: 0.8em;
-  width: 100%;
+  padding: 1.2rem 1.5rem 0.5rem 1.5rem;
+  font-weight: 500;
+  z-index: 2;
+  position: relative;
 }
 
 .post-title {
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #c7b453;
+}
+
+.post-date {
+  font-size: 0.9rem;
+  color: #e5d17a;
 }
 
 .post-content {
-  padding: 20px;
-  font-size: 1.2em;
-  color: #333;
+  padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+  font-size: 1.1rem;
+  color: #f5f5f5;
+  line-height: 1.6;
+  z-index: 2;
+  position: relative;
 }
 
 .post-footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
-  font-size: 0.9em;
-  color: #777;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.2rem 1.5rem;
+  background: transparent;
+  border-top: 1px solid rgba(199, 180, 83, 0.08);
+  z-index: 2;
+  position: relative;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.post-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: #e5d17a;
+}
+
+.post-button:hover {
+  background: rgba(199, 180, 83, 0.13);
+  color: #fff;
+}
+
+.post-button.active {
+  color: #c7b453;
+}
+
+.post-likes {
+  color: #e5d17a;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-comment-form {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.post-comment-input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: 1px solid #c7b453;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.13);
+  color: #fff;
+}
+
+.post-comment-input:focus {
+  outline: none;
+  border-color: #e5d17a;
+  box-shadow: 0 0 0 2px rgba(199, 180, 83, 0.1);
+}
+
+.post-comment-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: #c7b453;
+  color: #232526;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.post-comment-button:hover {
+  background: #e5d17a;
+  color: #232526;
+  transform: translateY(-1px);
+}
+
+/* Make post form styling */
+.make-post-container {
+  margin-bottom: 2rem;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+}
+
+.make-post-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #c7b453;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.13);
+  color: #fff;
+}
+
+.make-post-input:focus {
+  outline: none;
+  border-color: #e5d17a;
+  box-shadow: 0 0 0 3px rgba(199, 180, 83, 0.1);
+}
+
+.make-post-button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  background: #c7b453;
+  color: #232526;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.make-post-button:hover {
+  background: #e5d17a;
+  color: #232526;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(199, 180, 83, 0.2);
 }

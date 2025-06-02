@@ -1,13 +1,12 @@
 import React from 'react';
 import { useUser } from '../../context/userContext';
 import Login from '../login';
-import UserForm from './userForm';
 import NavBar from '../navigation/navBar';
 import MakePost from './makepost';
 import { useState, useEffect } from 'react';
 import { getFirestore, collection, doc, getDoc, query, where, orderBy, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
 import app from '../../firebaseConfig';
-import '../../styles/mainpage.css'
+import '../../styles/mainpage.css';
 
 export default function MainPage() {
   const {user} = useUser();
@@ -16,7 +15,6 @@ export default function MainPage() {
   const [username,setUsername] = useState('');
 
   const db = getFirestore(app);
-  
   
   useEffect(() => {//this is used to get the friends of the user
     if (user && user.uid) {
@@ -133,34 +131,60 @@ export default function MainPage() {
   }
 
   return (
-    <div>
+    <div className="main-container">
       <NavBar/>
-      <MakePost onPostCreated={handleNewPost}/>
-      <UserForm/>
-      {userData.map((post) => (
-        <div className="post" key={post.id}>
+      <div className="posts-container">
+        <MakePost onPostCreated={handleNewPost}/>
+        {userData.map((post) => (
+          <div className="post" key={post.id}>
             <div className="post-header">
-                <span className="post-title">{post.username}</span>
-                <span>{new Date(post.createdAt.seconds * 1000).toLocaleDateString()}</span>
+              <span className="post-title">{post.username}</span>
+              <span className="post-date">
+                {new Date(post.createdAt.seconds * 1000).toLocaleDateString()}
+              </span>
             </div>
             <div className="post-content">
-                {post.post}
+              {post.post}
             </div>
             <div className="post-footer">
-            <p>{post.likes?.length ?? 0} likes</p>
-                <button onClick={() => handleLike(post.id)}>
+              <div className="post-actions">
+                <span className="post-likes">
+                  {post.likes?.length ?? 0} likes
+                </span>
+                <button 
+                  className={`post-button ${post.likes?.includes(user.uid) ? 'active' : ''}`}
+                  onClick={() => handleLike(post.id)}
+                >
                   {post.likes?.includes(user.uid) ? 'Unlike' : 'Like'}
                 </button>
-                <button onClick={() => handleRepost(post.id)}>Repost</button>
-                <form onSubmit={(e) => handleComment(e, post.id, e.target.comment.value)}>
-                  <input type="text" placeholder="Comment" name="comment" />
-                  <button type="submit">Comment</button>
-                </form>
+                <button 
+                  className="post-button"
+                  onClick={() => handleRepost(post.id)}
+                >
+                  Repost
+                </button>
+              </div>
+              <form 
+                className="post-comment-form"
+                onSubmit={(e) => handleComment(e, post.id, e.target.comment.value)}
+              >
+                <input 
+                  type="text" 
+                  placeholder="Write a comment..." 
+                  name="comment"
+                  className="post-comment-input"
+                />
+                <button 
+                  type="submit"
+                  className="post-comment-button"
+                >
+                  Comment
+                </button>
+              </form>
             </div>
-        </div>
-      ))}
-    
-     
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

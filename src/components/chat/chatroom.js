@@ -6,6 +6,7 @@ import NavBar from '../navigation/navBar';
 import Login from '../login';
 import "../../styles/chatroom.css";
 import { useNavigate } from 'react-router-dom';
+
 export default function Chatroom () {
   const [friends,setFriends] = useState([]);
   const [friendUsernames, setFriendUsernames] = useState({});
@@ -17,7 +18,6 @@ export default function Chatroom () {
     getDoc(userDocRef).then((docSnap) => {
         if(docSnap.exists()){
             const userData = docSnap.data();
-            console.log(userData);
             setFriends(userData.friends || []);
         }
         else{
@@ -38,7 +38,7 @@ export default function Chatroom () {
       }
     });
   }, [friends, db]);
-  console.log(friends.length);
+
   const handleFriendClick = (friendId) => {
     navigate(`/chat/${friendId}`);
   };
@@ -46,18 +46,31 @@ export default function Chatroom () {
     return <Login/>;
   }
 
-  return <div>
-    <NavBar/>
-    {friends.length > 0 ? (
-        friends.map((friend) => (
-            <button onClick={() => {
-                handleFriendClick(friend);
-            }} key={friend} className="chatroom-friend">
-                {friendUsernames[friend] || 'Loading...'}
+  return (
+    <div className="chatroom-bg">
+      <NavBar/>
+      <div className="chatroom-container">
+        <div className="chatroom-tagline">
+          🧗‍♂️ Pick a belay partner to start climbing!
+        </div>
+        {friends.length > 0 ? (
+          friends.map((friend) => (
+            <button
+              onClick={() => handleFriendClick(friend)}
+              key={friend}
+              className="chatroom-friend"
+            >
+              <span className="friend-icon" role="img" aria-label="climbing-hold">🪢</span>
+              {friendUsernames[friend] || 'Loading...'}
             </button>
           ))
-    ) : (
-        <div>No friends yet</div>
-    )}
-    </div>;
+        ) : (
+          <div className="chatroom-empty">
+            <span className="chatroom-empty-icon" role="img" aria-label="no-friends">🧗‍♂️</span>
+            No friends yet — add some climbers to your crew!
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

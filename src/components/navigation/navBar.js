@@ -9,6 +9,8 @@ import { faHome, faUser, faComment, faPlus, faSignOutAlt, faSearch, faBell } fro
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import app from '../../firebaseConfig';
 
+//TODO: i dont see my own name in the search bar
+
 export default function NavBar() {
   const { user, logout } = useUser();
   const navigate = useNavigate();

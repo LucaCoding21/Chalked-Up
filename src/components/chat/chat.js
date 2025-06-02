@@ -4,6 +4,8 @@ import { useUser } from '../../context/userContext';
 import { getFirestore, getDoc, doc, setDoc, onSnapshot } from 'firebase/firestore';
 import app from '../../firebaseConfig';
 import { useState, useEffect, useCallback } from 'react';
+import '../../styles/chatroom.css';
+
 export default function Chat() {
     const { friendId } = useParams(); 
     const {user} = useUser();
@@ -29,7 +31,6 @@ export default function Chat() {
             }
         });
     }, [user.uid, friendId, db]);//rerun this when the user.uid or friendId changes
-
 
     const getChatID = useCallback(async () => {
         const chatDocId = [user.uid, friendId].sort().join('_');
@@ -58,9 +59,6 @@ export default function Chat() {
         fetchChatID();
     }, [getChatID]);
 
-    //okay so now we have the user data and the friend data
-
-
     useEffect(() => {
         if (!chatID) return;
 
@@ -75,7 +73,6 @@ export default function Chat() {
 
         return () => unsubscribe(); // Cleanup subscription
     }, [chatID, db]);
-
 
     const sendMessage = async (e) => {
         e.preventDefault(); // Prevent form submission
@@ -100,73 +97,36 @@ export default function Chat() {
         }
     };
 
-    return <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    return (
+      <div className="chat-bg">
         <NavBar />
-        <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ marginBottom: '20px' }}>
-                {userData && <h2 style={{ color: "black" }}>Chat with {friendData?.username}</h2>}
-            </div>
-            
-            <div style={{ 
-                flex: 1, 
-                overflowY: 'auto', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: '10px',
-                marginBottom: '20px'
-            }}>
-                {messages.map((message, index) => (
-                    <div 
-                        key={index} 
-                        style={{
-                            alignSelf: message.sender === user.uid ? 'flex-end' : 'flex-start',
-                            backgroundColor: message.sender === user.uid ? '#007bff' : '#e9ecef',
-                            color: message.sender === user.uid ? 'white' : 'black',
-                            padding: '8px 12px',
-                            borderRadius: '12px',
-                            maxWidth: '70%'
-                        }}
-                    >
-                        <div>{message.text}</div>
-                        <small style={{ fontSize: '0.8em' }}>
-                            {message.sender === user.uid ? 'You' : friendData?.username}
-                        </small>
-                    </div>
-                ))}
-            </div>
-
-            <form onSubmit={sendMessage} style={{ 
-                display: 'flex', 
-                gap: '10px',
-                padding: '20px',
-                borderTop: '1px solid #ddd'
-            }}>
-                <input 
-                    type="text" 
-                    value={message} 
-                    onChange={(e) => setMessage(e.target.value)}
-                    style={{
-                        flex: 1,
-                        padding: '10px',
-                        borderRadius: '4px',
-                        border: '1px solid #ddd'
-                    }}
-                    placeholder="Type a message..."
-                />
-                <button 
-                    type="submit"
-                    style={{
-                        padding: '10px 20px',
-                        borderRadius: '4px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        cursor: 'pointer'
-                    }}
-                >
-                    Send
-                </button>
-            </form>
+        <div className="chat-card">
+          <div className="chat-header">
+            {userData && <span>Chat with {friendData?.username}</span>}
+          </div>
+          <div className="chat-messages">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`chat-bubble ${message.sender === user.uid ? 'me' : 'friend'}`}
+              >
+                <div>{message.text}</div>
+              </div>
+            ))}
+          </div>
+          <form onSubmit={sendMessage} className="chat-input-row">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="chat-input"
+              placeholder="Type your message..."
+            />
+            <button type="submit" className="chat-send-btn">
+              Send
+            </button>
+          </form>
         </div>
-    </div>;
+      </div>
+    );
 }

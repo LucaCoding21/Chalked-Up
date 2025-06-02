@@ -1,6 +1,5 @@
 import { useUser } from '../../context/userContext';
-import { useState } from 'react';
-import NavBar from '../navigation/navBar';
+import { useState, useEffect } from 'react';
 import app from '../../firebaseConfig';
 import { getFirestore, collection, addDoc, serverTimestamp, getDoc, doc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
@@ -13,14 +12,18 @@ export default function MakePost({ onPostCreated }) {
   const [username, setUsername] = useState('');
   const db = getFirestore(app);
   const navigate = useNavigate();
-  const userDocRef = doc(db, 'users', user.uid);
 
-  getDoc(userDocRef).then((docSnap) => {
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      setUsername(userData.username);
+  useEffect(() => {
+    if (user) {
+      const userDocRef = doc(db, 'users', user.uid);
+      getDoc(userDocRef).then((docSnap) => {
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setUsername(userData.username);
+        }
+      });
     }
-  });
+  }, [user, db]);
 
   const uploadPost = async () => {
     const postCollectionRef = collection(db, 'posts');
@@ -30,7 +33,6 @@ export default function MakePost({ onPostCreated }) {
       uid: user.uid,
       createdAt: serverTimestamp()
     });
-    console.log(username);
     return docRef;
   };
 
@@ -55,22 +57,24 @@ export default function MakePost({ onPostCreated }) {
   }
 
   return (
-    <div>
-      <NavBar />
-      <div className="makepost-container">
-        <form className="makepost-form" onSubmit={handleSubmit}>
-          <textarea
-            className="makepost-textarea"
-            placeholder="Log your ascent!"
-            value={post}
-            onChange={(e) => setPost(e.target.value)}
-          />
-          <div className="makepost-actions">
-            <input type="file" className="makepost-file-input" />
-            <button type="submit" className="makepost-submit-button">Post</button>
-          </div>
-        </form>
-      </div>
+    <div className="make-post-card">
+      <form className="makepost-form" onSubmit={handleSubmit}>
+        <div className="makepost-header">
+          <span className="makepost-username">{username || user.displayName || user.email}</span>
+        </div>
+        <textarea
+          className="makepost-textarea"
+          placeholder="Log your latest send, project, or epic! 🧗‍♂️"
+          value={post}
+          onChange={(e) => setPost(e.target.value)}
+        />
+        <div className="makepost-actions">
+          <input type="file" className="makepost-file-input" />
+          <button type="submit" className="makepost-submit-button">
+            <span role="img" aria-label="carabiner">⛓️</span> Post
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

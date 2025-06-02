@@ -1,17 +1,103 @@
-
-
-.userForm{
+.userForm {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+  justify-content: center;
+  min-height: 100vh;
   width: 100vw;
-  background-color: #f0f0f0;
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+    url('https://images.unsplash.com/photo-1522163182402-834f871fd851?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
 }
 
-.userForm input{
-  margin: 10px;
+.userForm-card {
+  background: rgba(34, 40, 49, 0.96);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  border: 2px solid #c7b453;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
-.errorMessage{
-  color: red;
+
+.userForm-headline {
+  color: #c7b453;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.userForm-subtitle {
+  color: #e5d17a;
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.userForm form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.userForm input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #c7b453;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.13);
+  color: #fff;
+  font-size: 1.08rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.userForm input:focus {
+  outline: none;
+  border-color: #e5d17a;
+  box-shadow: 0 0 0 2px rgba(199, 180, 83, 0.13);
+}
+
+.userForm button {
+  padding: 12px 0;
+  background: #c7b453;
+  color: #232526;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.13rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 8px rgba(199, 180, 83, 0.13);
+  letter-spacing: 0.5px;
+}
+
+.userForm button:hover {
+  background: #e5d17a;
+  color: #232526;
+  transform: translateY(-2px) scale(1.04);
+}
+
+.errorMessage {
+  color: #ff6b6b;
+  background: #fff5f5;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  text-align: center;
+  width: 100%;
+  font-weight: 600;
 }
