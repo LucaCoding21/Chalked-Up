@@ -15,8 +15,6 @@ export default function Chat() {
     const db = getFirestore(app);
     const navigate = useNavigate();
     const[chatID,setChatID] = useState(null);
-    const [userData,setUserData] = useState(null);//USER DATA HAS ALL THE USERS DATA 
-  
     const [friendData,setFriendData] = useState(null);//FRIEND DATA HAS ALL THE FRIENDS DATA 
     const [messages,setMessages] = useState([]);
     const [message,setMessage] = useState("");
@@ -31,21 +29,14 @@ export default function Chat() {
     }, [messages]);
 
     useEffect(() => {
-        const userDocRef = doc(db, 'users', user.uid);
         const friendDocRef = doc(db, 'users', friendId);
         
-        getDoc(userDocRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                setUserData(docSnap.data());
-            }
-        });
-
         getDoc(friendDocRef).then((docSnap) => {
             if (docSnap.exists()) {
                 setFriendData(docSnap.data());
             }
         });
-    }, [user.uid, friendId, db]);//rerun this when the user.uid or friendId changes
+    }, [friendId, db]);//rerun this when the friendId changes
 
     const getChatID = useCallback(async () => {
         const chatDocId = [user.uid, friendId].sort().join('_');
