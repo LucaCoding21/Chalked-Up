@@ -145,6 +145,29 @@ export default function MainPage() {
             </div>
             <div className="post-content">
               {post.post}
+              {post.videoURL && (
+                <div className="post-video-container" data-video-id={post.id}>
+                  <video 
+                    className="post-video" 
+                    controls 
+                    src={post.videoURL}
+                    preload="metadata"
+                    onLoadStart={() => {
+                      // Video loading started
+                    }}
+                    onCanPlay={() => {
+                      // Video can start playing
+                      const container = document.querySelector(`[data-video-id="${post.id}"]`);
+                      if (container) {
+                        container.classList.add('loaded');
+                      }
+                    }}
+                    data-video-id={post.id}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )}
             </div>
             <div className="post-footer">
               <div className="post-actions">

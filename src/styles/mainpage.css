@@ -47,6 +47,18 @@
   transform: translateY(-4px) scale(1.01);
 }
 
+.post:hover .post-video-container,
+.make-post-container:hover .post-video-container {
+  /* Ensure video container doesn't get affected by post hover */
+  z-index: 3;
+}
+
+.post:hover .post-video,
+.make-post-container:hover .post-video {
+  /* Ensure video itself doesn't get affected by post hover */
+  z-index: 3;
+}
+
 /* Climbing icon watermark */
 .post::after, .make-post-container::after {
   content: '\1F9D7'; /* 🧗‍♂️ emoji as watermark */
@@ -68,6 +80,12 @@
   opacity: 0.07;
   z-index: 0;
   pointer-events: none;
+}
+
+.post .post-video-container::before,
+.make-post-container .post-video-container::before {
+  /* Remove the rock texture overlay from video containers */
+  display: none;
 }
 
 /* Padding and content styles */
@@ -188,6 +206,48 @@
   transform: translateY(-1px);
 }
 
+/* Video display in posts */
+.post-video-container {
+  margin-top: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #c7b453;
+  position: relative;
+}
+
+.post-video {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+.post-video::-webkit-media-controls {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.post-video::-webkit-media-controls-panel {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Video loading state */
+.post-video-container::before {
+  content: '📹';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  color: #c7b453;
+  z-index: 1;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.post-video-container.loaded::before {
+  display: none;
+}
+
 /* Make post form styling */
 .make-post-container {
   margin-bottom: 2rem;
@@ -231,4 +291,265 @@
   color: #232526;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(199, 180, 83, 0.2);
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* Main container adjustments */
+  .main-container {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Posts container mobile layout */
+  .posts-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 1rem 0.5rem;
+    padding-left: 0.5rem; /* Remove sidebar space on mobile */
+    padding-top: 5rem; /* Add space for mobile navbar */
+  }
+
+  /* Post cards mobile styling */
+  .post, .make-post-container {
+    margin: 1rem 0;
+    border-radius: 12px;
+    padding: 1rem;
+  }
+
+  .post-header, .make-post-header {
+    padding: 0.8rem 1rem 0.3rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .post-title {
+    font-size: 1rem;
+  }
+
+  .post-date {
+    font-size: 0.8rem;
+  }
+
+  .post-content {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* Video mobile styling */
+  .post-video-container {
+    margin-top: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .post-video {
+    max-height: 250px;
+    border-radius: 8px;
+  }
+
+  /* Post footer mobile layout */
+  .post-footer {
+    padding: 0.8rem 1rem;
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+
+  .post-actions {
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .post-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    flex: 1;
+    text-align: center;
+  }
+
+  .post-likes {
+    font-size: 0.8rem;
+    justify-content: center;
+  }
+
+  /* Comment form mobile styling */
+  .post-comment-form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .post-comment-input {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .post-comment-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  /* Make post mobile styling */
+  .make-post-container {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 1rem 1rem 1rem;
+  }
+
+  .make-post-input {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .make-post-button {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+
+  /* Remove hover effects on mobile */
+  .post:hover, .make-post-container:hover {
+    transform: none;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 8px 0 rgba(0,0,0,0.10) inset;
+  }
+
+  .post-button:hover {
+    background: transparent;
+    color: #e5d17a;
+  }
+
+  .post-comment-button:hover {
+    background: #c7b453;
+    transform: none;
+  }
+
+  .make-post-button:hover {
+    background: #c7b453;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(199, 180, 83, 0.13);
+  }
+
+  /* Adjust watermark position for mobile */
+  .post::after, .make-post-container::after {
+    font-size: 1.8rem;
+    bottom: 12px;
+    right: 16px;
+  }
+
+  /* Reduce rock texture opacity on mobile */
+  .post::before, .make-post-container::before {
+    opacity: 0.05;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .posts-container {
+    padding: 0.5rem 0.3rem;
+    padding-top: 4rem;
+  }
+
+  .post, .make-post-container {
+    margin: 0.8rem 0;
+    padding: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .post-header, .make-post-header {
+    padding: 0.6rem 0.8rem 0.2rem 0.8rem;
+  }
+
+  .post-content {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.95rem;
+  }
+
+  .post-video {
+    max-height: 200px;
+  }
+
+  .post-footer {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .post-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .post-comment-input {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.85rem;
+  }
+
+  .post-comment-button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .make-post-container {
+    padding: 1.2rem 0.8rem 0.8rem 0.8rem;
+  }
+
+  .make-post-input {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .make-post-button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Even smaller watermark for tiny screens */
+  .post::after, .make-post-container::after {
+    font-size: 1.5rem;
+    bottom: 10px;
+    right: 12px;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .posts-container {
+    padding-top: 3rem;
+  }
+
+  .post-video {
+    max-height: 180px;
+  }
+
+  .post-footer {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .post-comment-form {
+    flex-direction: row;
+  }
+
+  .post-comment-button {
+    width: auto;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .post-button, .post-comment-button, .make-post-button {
+    min-height: 44px; /* Minimum touch target size */
+  }
+
+  .post-comment-input {
+    min-height: 44px;
+  }
+
+  .remove-video-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
 }

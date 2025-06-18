@@ -64,26 +64,33 @@ export default function NavBar() {
   return (
     <div className={`navBar ${activeComponent === 'notification' || activeComponent === 'search' ? 'expanded' : ''}`}>
       <button onClick={() => setActiveComponent('search')} className='navBarButton'>
-        {activeComponent === 'search' ? 'Search' : <FontAwesomeIcon icon={faSearch} />}
+        <FontAwesomeIcon icon={faSearch} />
+        <span>Search</span>
       </button>
       <button onClick={handleNotificationClick} className='navBarButton'>
-        {activeComponent === 'notification' ? 'Notifications' : <FontAwesomeIcon icon={faBell} />}
+        <FontAwesomeIcon icon={faBell} />
+        <span>Notifications</span>
         {hasUnreadNotifications && <span className="unread-indicator"></span>}
       </button>
       <button onClick={handleChatroomRoute} className='navBarButton'>
-        {activeComponent ? <FontAwesomeIcon icon={faComment} /> : 'Chatroom'}
+        <FontAwesomeIcon icon={faComment} />
+        <span>Chatroom</span>
       </button>
       <button onClick={handleMainPageRoute} className='navBarButton'>
-        {activeComponent ? <FontAwesomeIcon icon={faHome} /> : 'Main Page'}
+        <FontAwesomeIcon icon={faHome} />
+        <span>Main Page</span>
       </button>
       <button onClick={handleMyProfileRoute} className='navBarButton'>
-        {activeComponent ? <FontAwesomeIcon icon={faUser} /> : 'My Profile'}
+        <FontAwesomeIcon icon={faUser} />
+        <span>My Profile</span>
       </button>
       <button onClick={handleMakePostRoute} className='navBarButton'>
-        {activeComponent ? <FontAwesomeIcon icon={faPlus} /> : 'Make Post'}
+        <FontAwesomeIcon icon={faPlus} />
+        <span>Make Post</span>
       </button>
       <button onClick={handleLogout} className='navBarButton'>
-        {activeComponent ? <FontAwesomeIcon icon={faSignOutAlt} /> : 'Logout'}
+        <FontAwesomeIcon icon={faSignOutAlt} />
+        <span>Logout</span>
       </button>
 
       {activeComponent === 'search' && (

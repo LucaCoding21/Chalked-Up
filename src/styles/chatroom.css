@@ -145,6 +145,8 @@
   flex-direction: column;
   gap: 22px;
   margin-bottom: 1.5rem;
+  max-height: 400px;
+  scroll-behavior: smooth;
 }
 
 .chat-bubble {

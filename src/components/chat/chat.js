@@ -3,7 +3,7 @@ import NavBar from '../navigation/navBar';
 import { useUser } from '../../context/userContext';
 import { getFirestore, getDoc, doc, setDoc, onSnapshot } from 'firebase/firestore';
 import app from '../../firebaseConfig';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import '../../styles/chatroom.css';
 
 export default function Chat() {
@@ -15,6 +15,16 @@ export default function Chat() {
     const [friendData,setFriendData] = useState(null);//FRIEND DATA HAS ALL THE FRIENDS DATA 
     const [messages,setMessages] = useState([]);
     const [message,setMessage] = useState("");
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     useEffect(() => {
         const userDocRef = doc(db, 'users', user.uid);
         const friendDocRef = doc(db, 'users', friendId);
@@ -113,6 +123,7 @@ export default function Chat() {
                 <div>{message.text}</div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           <form onSubmit={sendMessage} className="chat-input-row">
             <input
