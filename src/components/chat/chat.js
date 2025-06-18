@@ -4,14 +4,19 @@ import { useUser } from '../../context/userContext';
 import { getFirestore, getDoc, doc, setDoc, onSnapshot } from 'firebase/firestore';
 import app from '../../firebaseConfig';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPaperPlane, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/chatroom.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Chat() {
     const { friendId } = useParams(); 
     const {user} = useUser();
     const db = getFirestore(app);
+    const navigate = useNavigate();
     const[chatID,setChatID] = useState(null);
     const [userData,setUserData] = useState(null);//USER DATA HAS ALL THE USERS DATA 
+  
     const [friendData,setFriendData] = useState(null);//FRIEND DATA HAS ALL THE FRIENDS DATA 
     const [messages,setMessages] = useState([]);
     const [message,setMessage] = useState("");
@@ -107,22 +112,67 @@ export default function Chat() {
         }
     };
 
+    const formatTime = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const handleBackClick = () => {
+        navigate('/chatroom');
+    };
+
     return (
       <div className="chat-bg">
         <NavBar />
         <div className="chat-card">
           <div className="chat-header">
-            {userData && <span>Chat with {friendData?.username}</span>}
+            <button 
+              onClick={handleBackClick}
+              style={{
+                background: 'rgba(229, 209, 122, 0.1)',
+                border: '1px solid rgba(229, 209, 122, 0.2)',
+                color: '#e5d17a',
+                cursor: 'pointer',
+                padding: '0.75rem',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                minWidth: '44px',
+                minHeight: '44px',
+                fontSize: '1rem'
+              }}
+              onMouseEnter={(e) => e.target.style.background = 'rgba(229, 209, 122, 0.2)'}
+              onMouseLeave={(e) => e.target.style.background = 'rgba(229, 209, 122, 0.1)'}
+            >
+              <FontAwesomeIcon icon={faArrowLeft} />
+            </button>
+            <span>{friendData?.username || 'Loading...'}</span>
           </div>
           <div className="chat-messages">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`chat-bubble ${message.sender === user.uid ? 'me' : 'friend'}`}
-              >
-                <div>{message.text}</div>
+            {messages.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                color: '#a0aec0',
+                padding: '2rem',
+                fontSize: '0.9rem'
+              }}>
+                Start a conversation with {friendData?.username || 'your friend'}
               </div>
-            ))}
+            ) : (
+              messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`chat-bubble ${message.sender === user.uid ? 'me' : 'friend'}`}
+                >
+                  <div>{message.text}</div>
+                  <div className="chat-bubble-meta">
+                    {formatTime(message.timestamp)}
+                  </div>
+                </div>
+              ))
+            )}
             <div ref={messagesEndRef} />
           </div>
           <form onSubmit={sendMessage} className="chat-input-row">
@@ -131,10 +181,10 @@ export default function Chat() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="chat-input"
-              placeholder="Type your message..."
+              placeholder="Type a message..."
             />
             <button type="submit" className="chat-send-btn">
-              Send
+              <FontAwesomeIcon icon={faPaperPlane} />
             </button>
           </form>
         </div>

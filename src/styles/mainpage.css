@@ -222,14 +222,6 @@
   display: block;
 }
 
-.post-video::-webkit-media-controls {
-  background: rgba(0, 0, 0, 0.7);
-}
-
-.post-video::-webkit-media-controls-panel {
-  background: rgba(0, 0, 0, 0.7);
-}
-
 /* Video loading state */
 .post-video-container::before {
   content: '📹';
@@ -301,6 +293,7 @@
     height: auto;
     min-height: 100vh;
     overflow-x: hidden;
+    padding-bottom: 90px; /* Space for bottom navigation */
   }
 
   /* Posts container mobile layout */
@@ -309,7 +302,8 @@
     margin: 0;
     padding: 1rem 0.5rem;
     padding-left: 0.5rem; /* Remove sidebar space on mobile */
-    padding-top: 5rem; /* Add space for mobile navbar */
+    padding-top: 1rem; /* Reduced top padding since no top navbar */
+    padding-bottom: 2rem; /* Extra space for bottom nav */
   }
 
   /* Post cards mobile styling */

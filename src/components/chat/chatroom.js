@@ -6,6 +6,8 @@ import NavBar from '../navigation/navBar';
 import Login from '../login';
 import "../../styles/chatroom.css";
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faMessage } from '@fortawesome/free-solid-svg-icons';
 
 export default function Chatroom () {
   const [friends,setFriends] = useState([]);
@@ -13,6 +15,7 @@ export default function Chatroom () {
   const {user} = useUser();
   const db = getFirestore(app);
   const navigate = useNavigate();
+  
   useEffect(() => {//this is to get the friends of the user
     const userDocRef = doc(collection(db,'users'),user.uid);
     getDoc(userDocRef).then((docSnap) => {
@@ -42,6 +45,7 @@ export default function Chatroom () {
   const handleFriendClick = (friendId) => {
     navigate(`/chat/${friendId}`);
   };
+  
   if(!user){
     return <Login/>;
   }
@@ -51,7 +55,7 @@ export default function Chatroom () {
       <NavBar/>
       <div className="chatroom-container">
         <div className="chatroom-tagline">
-          🧗‍♂️ Pick a belay partner to start climbing!
+          Messages
         </div>
         {friends.length > 0 ? (
           friends.map((friend) => (
@@ -60,14 +64,21 @@ export default function Chatroom () {
               key={friend}
               className="chatroom-friend"
             >
-              <span className="friend-icon" role="img" aria-label="climbing-hold">🪢</span>
+              <div className="friend-icon">
+                <FontAwesomeIcon icon={faUser} />
+              </div>
               {friendUsernames[friend] || 'Loading...'}
             </button>
           ))
         ) : (
           <div className="chatroom-empty">
-            <span className="chatroom-empty-icon" role="img" aria-label="no-friends">🧗‍♂️</span>
-            No friends yet — add some climbers to your crew!
+            <div className="chatroom-empty-icon">
+              <FontAwesomeIcon icon={faMessage} />
+            </div>
+            <div>
+              <h3>No conversations yet</h3>
+              <p>Add friends to start messaging</p>
+            </div>
           </div>
         )}
       </div>
